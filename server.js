@@ -7,6 +7,7 @@ const connectToMongoDB =  require('./utils/connectDB')
 const errorHandler = require('./utils/errorHandler')
 const ErrorResponse = require('./utils/ErrorResponse')
 const cors = require('cors')
+const connectDB = require('./utils/connectDB')
 
 
 app.use(express.json())
@@ -17,7 +18,7 @@ app.get('/', (req, res) => {
     res.send('Earist\'s QR Code Verification API is running.')
 })
 
-app.post('earist/api/rewards/getRewards', async (req, res, next) => {
+app.post('/earist/api/rewards/getRewards', async (req, res, next) => {
     try {
 
         const rewards = await Reward.find({})
@@ -27,7 +28,7 @@ app.post('earist/api/rewards/getRewards', async (req, res, next) => {
     }
 })
 
-app.post('earist/api/rewards/addReward', async (req, res, next) => {
+app.post('/earist/api/rewards/addReward', async (req, res, next) => {
     try {
 
         const newReward = await Reward.create({...req.body})
@@ -38,7 +39,7 @@ app.post('earist/api/rewards/addReward', async (req, res, next) => {
     }
 })
 
-app.post('earist/api/rewards/getRewardInfo', async (req, res, next) => {
+app.post('/earist/api/rewards/getRewardInfo', async (req, res, next) => {
     try {
         const {qrCode} = req.body
         if(!qrCode) return next(new ErrorResponse('Provide the QR\'s code', 400))
@@ -52,7 +53,7 @@ app.post('earist/api/rewards/getRewardInfo', async (req, res, next) => {
     }
 })
 
-app.post('earist/api/rewards/setRewardRedeemed', async (req, res, next) => {
+app.post('/earist/api/rewards/setRewardRedeemed', async (req, res, next) => {
     try {
         const {qrCode} = req.body
         if(!qrCode) return next(new ErrorResponse('Provide the QR\'s code', 400))
@@ -69,4 +70,10 @@ app.post('earist/api/rewards/setRewardRedeemed', async (req, res, next) => {
 
 
 app.use(errorHandler)
+
+
+
+const PORT = process.env.PORT || 5000
+connectDB()
+    .then(() => app.listen(PORT, () => console.log(`Server is running on port ${PORT}`)))
 
